@@ -9,5 +9,21 @@ website: https://t11e.tk
 load: POSTWORLD
 prefix: BanSQL
 database: true
-depend:
-  - PaperT11EAPI
+depend: ["PaperT11EAPI"]
+commands:
+  permban:
+    permission: ban.pban
+    aliases: ["pban"]
+    description: Perm ban command
+  tempban:
+    permission: ban.tban
+    aliases: ["tban"]
+    description: Temp ban command
+  unban:
+    permission: ban.unban
+    aliases: ["uban"]
+    description: Unban command
+  banlist:
+    permission: ban.list
+    aliases: ["blist"]
+    description: Banlist command

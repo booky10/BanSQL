@@ -51,7 +51,7 @@ public class Configuration {
         return this;
     }
 
-    public Configuration values() {
+    private Configuration values() {
         this.host = this.config.getString("data.host");
         this.port = this.config.getInt("data.port");
         this.database = this.config.getString("data.database");
