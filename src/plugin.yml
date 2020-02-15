@@ -1,0 +1,13 @@
+---
+name: BanSQL
+main: tk.t11e.bansql.main.Main
+version: '1.0'
+api-version: '1.15'
+author: booky10
+description: A Ban plugin for MySQL
+website: https://t11e.tk
+load: POSTWORLD
+prefix: BanSQL
+database: true
+depend:
+  - PaperT11EAPI
