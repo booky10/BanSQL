@@ -1,2 +1,2 @@
 # BanSQL
-tk.t11e.bansql.main.Main
+A Ban plugin for MySQL
