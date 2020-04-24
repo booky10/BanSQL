@@ -14,11 +14,11 @@ commands:
   permban:
     permission: ban.pban
     aliases: ["pban"]
-    description: Perm ban command
+    description: Permban command
   tempban:
     permission: ban.tban
     aliases: ["tban"]
-    description: Temp ban command
+    description: Tempban command
   unban:
     permission: ban.unban
     aliases: ["uban"]
@@ -27,3 +27,11 @@ commands:
     permission: ban.list
     aliases: ["blist"]
     description: Banlist command
+  idban:
+    permission: ban.id
+    aliases: ["iban"]
+    description: Ban with IDs
+  idbanlist:
+    permission: ban.id.list
+    aliases: ["ibanlist","iblist"]
+    description: List the IDs for banning

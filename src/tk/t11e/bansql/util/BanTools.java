@@ -3,12 +3,15 @@ package tk.t11e.bansql.util;
 
 import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import tk.t11e.api.util.UUIDFetcher;
 import tk.t11e.bansql.main.Main;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.ZoneId;
 import java.util.*;
 
 public class BanTools {
@@ -16,8 +19,8 @@ public class BanTools {
     private static Main main = Main.main;
 
     public static Boolean isBanned(UUID uuid) {
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("SELECT UUID FROM ban_sql WHERE UUID=?");
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
@@ -34,25 +37,25 @@ public class BanTools {
     @NotNull
     public static String getReason(UUID uuid) {
         if (!isBanned(uuid)) return null;
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("SELECT Reason FROM ban_sql WHERE UUID=?");
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
 
-            if(result.next())
+            if (result.next())
                 return result.getString(1);
 
         } catch (SQLException exception) {
-            Bukkit.broadcastMessage("§e"+exception.getMessage());
+            Bukkit.broadcastMessage("§e" + exception.getMessage());
         }
         return null;
     }
 
     public static Boolean banPlayerPermanent(UUID uuid, String reason) {
         if (isBanned(uuid)) return false;
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("INSERT INTO ban_sql (UUID,Reason,unban) VALUES (?,?,?)");
 
             statement.setString(1, uuid.toString());
@@ -69,8 +72,8 @@ public class BanTools {
 
     public static Boolean banPlayerTemp(UUID uuid, String reason,Long unban) {
         if (isBanned(uuid)) return false;
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("INSERT INTO ban_sql (UUID,Reason,unban) VALUES (?,?,?)");
 
             statement.setString(1, uuid.toString());
@@ -87,8 +90,8 @@ public class BanTools {
 
     public static String getUnbanTime(UUID uuid) {
         if (!isBanned(uuid)) return null;
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("SELECT unban FROM ban_sql WHERE UUID=?");
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
@@ -104,9 +107,8 @@ public class BanTools {
 
     public static void unban(UUID uuid) {
         if(!isBanned(uuid)) return;
-
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("DELETE FROM ban_sql WHERE UUID=?");
             statement.setString(1, uuid.toString());
 
@@ -117,8 +119,8 @@ public class BanTools {
     }
 
     public static List<String> getBannedPlayers() {
-        try {
-            PreparedStatement statement = main.getSqlTools().getConnection()
+        try  (Connection connection = main.getSqlTools().getConnection()) {
+            PreparedStatement statement = connection
                     .prepareStatement("SELECT UUID FROM ban_sql");
             ResultSet result= statement.executeQuery();
             List<String> UUIDs=new ArrayList<>();
@@ -147,6 +149,7 @@ public class BanTools {
 
     public static String getTempBanMessage(String reason, Long unban) {
         Calendar time = Calendar.getInstance();
+        time.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         time.setTimeInMillis(unban);
         String unbanStr = time.getTime().toString();
 

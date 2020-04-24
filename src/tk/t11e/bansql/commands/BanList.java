@@ -21,8 +21,8 @@ public class BanList extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(CommandSender sender, String[] args, Integer length) {
-        if(length==0) {
+    public void onExecute(CommandSender sender, String[] args) {
+        if(args.length==0) {
             sender.sendMessage("--------[Banned]--------");
             for (String name: BanTools.getBannedPlayers())
                 sender.sendMessage("  - "+name);
@@ -31,8 +31,8 @@ public class BanList extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(Player player, String[] args, Integer length) {
-        if(length==0) {
+    public void onPlayerExecute(Player player, String[] args) {
+        if(args.length==0) {
             player.sendMessage("§e--------§6[Banned]§e--------");
             for (String name: BanTools.getBannedPlayers())
                 player.sendMessage("§e  - "+name);
@@ -41,7 +41,7 @@ public class BanList extends CommandExecutor {
     }
 
     @Override
-    public List<String> onComplete(CommandSender sender, String[] args, Integer length) {
-        return Collections.emptyList();
+    public List<String> onComplete(CommandSender sender, String[] args,List<String> completions) {
+        return completions;
     }
 }

@@ -21,8 +21,8 @@ public class Unban extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(CommandSender sender, String[] args, Integer length) {
-        if(length==1){
+    public void onExecute(CommandSender sender, String[] args) {
+        if(args.length==1){
             UUID target = UUIDFetcher.getUUID(args[0]);
             if(target!=null)
                 if(BanTools.isBanned(target)) {
@@ -37,8 +37,8 @@ public class Unban extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(Player player, String[] args, Integer length) {
-        if(length==1){
+    public void onPlayerExecute(Player player, String[] args) {
+        if(args.length==1){
             UUID target = UUIDFetcher.getUUID(args[0]);
             if(target!=null)
                 if(BanTools.isBanned(target)) {
@@ -53,10 +53,7 @@ public class Unban extends CommandExecutor {
     }
 
     @Override
-    public List<String> onComplete(CommandSender sender, String[] args, Integer length) {
-        List<String> list = new ArrayList<>();
-        if(length==1)
-            list.addAll(getOnlinePlayerNames());
-        return list;
+    public List<String> onComplete(CommandSender sender, String[] args,List<String> completions) {
+        return completions;
     }
 }

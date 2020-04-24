@@ -2,6 +2,7 @@ package tk.t11e.bansql.commands;
 // Created by booky10 in BanSQL (15:16 15.02.20)
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tk.t11e.api.commands.CommandExecutor;
@@ -20,7 +21,7 @@ public class TempBan extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(CommandSender sender, String[] args, Integer length) {
+    public void onExecute(CommandSender sender, String[] args) {
         if(args.length>=4) {
             Player target= Bukkit.getPlayer(args[0]);
             if(target!=null) {
@@ -40,10 +41,10 @@ public class TempBan extends CommandExecutor {
                     return;
                 }
 
-                long unban = TimeUnit.MILLISECONDS.convert(time, unit);
+                long unban = System.currentTimeMillis()+TimeUnit.MILLISECONDS.convert(time, unit);
 
                 StringBuilder reason = new StringBuilder();
-                for (int i = 1; i < args.length; i++)
+                for (int i = 3; i < args.length; i++)
                     reason.append(args[i]).append(" ");
 
                 if(BanTools.banPlayerTemp(target.getUniqueId(), reason.toString(),unban)) {
@@ -59,8 +60,8 @@ public class TempBan extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(Player player, String[] args, Integer length) {
-        if(length>=4) {
+    public void onPlayerExecute(Player player, String[] args) {
+        if(args.length>=4) {
             Player target= Bukkit.getPlayer(args[0]);
             if(target!=null) {
                 long time;
@@ -79,12 +80,13 @@ public class TempBan extends CommandExecutor {
                     return;
                 }
 
-                long unban = TimeUnit.MILLISECONDS.convert(time, unit);
+                long unban = System.currentTimeMillis()+TimeUnit.MILLISECONDS.convert(time, unit);
 
                 StringBuilder reason = new StringBuilder();
-                for (int i = 1; i < args.length; i++)
+                for (int i = 3; i < args.length; i++)
                     reason.append(args[i]).append(" ");
 
+                reason=new StringBuilder(ChatColor.translateAlternateColorCodes('&',reason.toString()));
                 if(BanTools.banPlayerTemp(target.getUniqueId(), reason.toString(),unban)) {
                     target.kickPlayer(BanTools.getTempBanMessage(reason.toString(),unban));
                     player.sendMessage(Main.PREFIX + "§aSuccessfully temporarily banned " + args[0] +
@@ -98,13 +100,12 @@ public class TempBan extends CommandExecutor {
     }
 
     @Override
-    public List<String> onComplete(CommandSender sender, String[] args, Integer length) {
-        List<String> list = new ArrayList<>();
-        if(length==1)
-            list.addAll(getOnlinePlayerNames());
-        else if(length==3)
+    public List<String> onComplete(CommandSender sender, String[] args,List<String> completions) {
+        if(args.length==1)
+            completions.addAll(getOnlinePlayerNames());
+        else if(args.length==3)
             for (TimeUnit unit:TimeUnit.values())
-                list.add(unit.toString());
-        return list;
+                completions.add(unit.toString().toLowerCase());
+        return completions;
     }
 }

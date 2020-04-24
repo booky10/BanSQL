@@ -4,15 +4,14 @@ package tk.t11e.bansql.main;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.t11e.bansql.commands.Ban;
-import tk.t11e.bansql.commands.BanList;
-import tk.t11e.bansql.commands.TempBan;
-import tk.t11e.bansql.commands.Unban;
+import tk.t11e.api.util.SQLTools;
+import tk.t11e.bansql.commands.*;
 import tk.t11e.bansql.listener.JoinLeaveListener;
 import tk.t11e.bansql.util.Configuration;
-import tk.t11e.bansql.util.SQLTools;
 
 import java.sql.SQLException;
+import java.time.ZoneId;
+import java.util.TimeZone;
 
 @SuppressWarnings("unused")
 public class Main extends JavaPlugin {
@@ -27,24 +26,16 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         long milliseconds = System.currentTimeMillis();
 
-        main=this;
-        config=new Configuration(this);
-        sqlTools=new SQLTools(config.getHost(),config.getPort(),config.getDatabase(),
-                config.getUsername(),config.getPassword());
+        main = this;
+        config = new Configuration(this);
+        sqlTools = new SQLTools(config.getHost(), config.getPort(), config.getDatabase(), config.getUsername(),
+                config.getPassword());
+
         initCommands();
         initListener(Bukkit.getPluginManager());
 
         milliseconds = System.currentTimeMillis() - milliseconds;
-        getLogger().info("[GunGame] It took " + milliseconds + "ms to initialize this plugin!");
-    }
-
-    @Override
-    public void onDisable() {
-        try {
-            sqlTools.getConnection().close();
-        } catch (SQLException exception) {
-            Bukkit.broadcastMessage("§e"+exception.getMessage());
-        }
+        getLogger().info("It took " + milliseconds + "ms to initialize this plugin!");
     }
 
     private void initListener(PluginManager pluginManager) {
@@ -56,6 +47,8 @@ public class Main extends JavaPlugin {
         new TempBan().init();
         new Unban().init();
         new BanList().init();
+        new IDBan().init();
+        new IDBanList().init();
     }
 
     public Configuration getConfiguration() {

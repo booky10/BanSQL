@@ -2,6 +2,7 @@ package tk.t11e.bansql.commands;
 // Created by booky10 in BanSQL (15:16 15.02.20)
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -23,7 +24,7 @@ public class Ban extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(CommandSender sender, String[] args, Integer length) {
+    public void onExecute(CommandSender sender, String[] args) {
         if(args.length>=2) {
             Player target= Bukkit.getPlayer(args[0]);
             if(target!=null) {
@@ -31,6 +32,7 @@ public class Ban extends CommandExecutor {
                 for (int i = 1; i < args.length; i++)
                     reason.append(args[i]).append(" ");
 
+                reason=new StringBuilder(ChatColor.translateAlternateColorCodes('&',reason.toString()));
                 if(BanTools.banPlayerPermanent(target.getUniqueId(), reason.toString())) {
                     target.kickPlayer(BanTools.getBanMessage(reason.toString()));
                     sender.sendMessage("Successfully permanently banned " + args[0] + "!");
@@ -43,7 +45,7 @@ public class Ban extends CommandExecutor {
     }
 
     @Override
-    public void onExecute(Player player, String[] args, Integer length) {
+    public void onPlayerExecute(Player player, String[] args) {
         if(args.length>=2) {
             Player target= Bukkit.getPlayer(args[0]);
             if(target!=null) {
@@ -63,10 +65,9 @@ public class Ban extends CommandExecutor {
     }
 
     @Override
-    public List<String> onComplete(CommandSender sender, String[] args, Integer length) {
-        List<String> list = new ArrayList<>();
-        if(length==1)
-            list.addAll(getOnlinePlayerNames());
-        return list;
+    public List<String> onComplete(CommandSender sender, String[] args,List<String> completions) {
+        if(args.length==1)
+            completions.addAll(getOnlinePlayerNames());
+        return completions;
     }
 }
